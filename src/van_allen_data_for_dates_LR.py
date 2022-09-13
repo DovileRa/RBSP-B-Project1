@@ -1,3 +1,8 @@
+########################################################################################################################
+#Takes Van Allen Probe data and completes a double linear regression (see modules)
+########################################################################################################################
+
+
 import datetime as dt
 import os
 from os.path import exists
@@ -187,8 +192,9 @@ def energy_flux_for_time(time,hope,mageis):
     hope_flux = hope.varget('FESA')[hope_index,0:]
     mageis_flux = mageis.varget('FESA')[mag_index,0:]
     position = hope.varget('L_star_Ele')
+    mlt = hope.varget('MLT_Ele')
 
-    return hope_energy,hope_flux,mageis_energy,mageis_flux, position
+    return hope_energy,hope_flux,mageis_energy,mageis_flux, position, mlt
 
 def get_regression_variables(times, hope, mageis):
     #get energy and flux
@@ -202,8 +208,8 @@ def get_regression_variables(times, hope, mageis):
     i = 0
     for time in times:
 
-        hope_energy,hope_flux,mageis_energy,mageis_flux,position = energy_flux_for_time(time,hope,mageis)
-        energy, log_psd, hope_energy_series, mageis_energy_series, log_hope_psd, log_mageis_psd = data_pre_processing(hope_energy,hope_flux,mageis_energy,mageis_flux,position)
+        hope_energy,hope_flux,mageis_energy,mageis_flux,position, mlt = energy_flux_for_time(time,hope,mageis)
+        energy, log_psd, hope_energy_series, mageis_energy_series, log_hope_psd, log_mageis_psd = data_pre_processing(hope_energy,hope_flux,mageis_energy,mageis_flux,position, mlt)
         # single linear regression
 
 
@@ -224,7 +230,7 @@ def get_regression_variables(times, hope, mageis):
 #Table construction
 def join_hope_mageis(hope, mageis, date):
     pd.set_option('display.max_columns',1000)
-    df = pd.DataFrame(columns=["HOPE_time", "MagEIS_time", "Position", "Grad", "Intercept", "Error", "Grad_1", "Intercept_1", "Grad_2", "Intercept_2", "Total_Error","energy","log_psd", "hope_energy", "mageis_energy", "log_hope_psd", "log_mageis_psd"])
+    df = pd.DataFrame(columns=["HOPE_time", "MagEIS_time", "Position","MLT", "Grad", "Intercept", "Error", "Grad_1", "Intercept_1", "Grad_2", "Intercept_2", "Total_Error","energy","log_psd", "hope_energy", "mageis_energy", "log_hope_psd", "log_mageis_psd"])
     #pandas DataFrame containing series:
     print(hope.cdf_info()['zVariables'])
     print(mageis.cdf_info()['zVariables'])
@@ -249,8 +255,10 @@ def join_hope_mageis(hope, mageis, date):
     print('hope times', np.size(hope_times))
     times = np.array(times)
     position = hope.varget('L_star_Ele')
+    mlt = hope.varget('MLT_Ele')
 
     df["Position"] = position
+    df["MLT"] = mlt
     df["MagEIS_time"] = times[:, 1]
     df["HOPE_time"] = times[:, 0]
 

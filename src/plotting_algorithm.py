@@ -21,22 +21,12 @@ print(count)
 
 for i in range(3311, count):
 
-
-
-    #energy = list(df.iloc[i]["energy"].split(" "))
-    #energy = list(map(float, filter(None, [s.strip("[").strip("]").strip("\n") for s in energy])))
-
-
-
     hope_energy = list(df.iloc[i]["hope_energy"].split(" "))
     hope_energy = list(map(float, filter(None, [s.strip("[").strip("]").strip("\n") for s in hope_energy])))
 
     mageis_energy = list(df.iloc[i]["mageis_energy"].split(" "))
     mageis_energy = list(map(float, filter(None, [s.strip("[").strip("]").strip("\n") for s in mageis_energy])))
 
-
-    #log_psd = list(df.iloc[i]["log_psd"].split(" "))
-    #log_psd = list(map(float, filter(None, [s.strip("[").strip("]").strip("\n") for s in log_psd])))
 
     log_hope_psd = list(df.iloc[i]["log_hope_psd"].split(" "))
     log_hope_psd = list(map(float, filter(None, [s.strip("[").strip("]").strip("\n") for s in log_hope_psd])))
